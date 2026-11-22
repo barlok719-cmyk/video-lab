@@ -24,10 +24,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: Install dependencies
         run: npm install
+
+      - name: Prepare Remotion browser
+        run: npx remotion browser ensure
 
       - name: Render MP4
         run: npx remotion render src/index.ts Laboratory42 out/lab-test.mp4 --codec=h264

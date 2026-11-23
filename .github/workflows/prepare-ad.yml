@@ -1,0 +1,58 @@
+name: Prepare ICQ ad source
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out video project
+        uses: actions/checkout@v4
+
+      - name: Install image tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-dejavu-core
+          python -m pip install --upgrade Pillow
+
+      - name: Prepare logo avatars
+        run: |
+          mkdir -p assets out
+          cp "6EM7UyiHpPx1NEZpz_P0QRSUS-wW6W0f0k3SvBBbHK8lFUy1ZtMeAnMqJRwWZxZsfvejYjLM2jHQXTMrBhHaHZK8JbQVX7RJtvb3tqYQ7QmmLpYi02hA7ShRF5Td1HnWTaJw2VBRfHkGN7UkFP7tEbENot3TtqTmyzqiB0Krq5magVvO6E16i5Dhq5HQqGmU.jpg" assets/logo.jpg
+          python tools/prepare_source.py
+
+      - name: Redact profile identity and replace avatars
+        run: |
+          ffmpeg -y -i "21338455214597.mp4" \
+            -i assets/avatar-small.png \
+            -i assets/avatar-large.png \
+            -filter_complex "
+              [0:v]drawbox=x=116:y=84:w=130:h=31:color=black:t=fill,
+                   drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='ICQ User':fontcolor=white:fontsize=18:x=120:y=90,
+                   drawbox=x=220:y=344:w=136:h=31:color=black:t=fill,
+                   drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='ICQ User':fontcolor=white:fontsize=19:x=228:y=350[v0];
+              [v0][1:v]overlay=x=62:y=74:shortest=1[v1];
+              [v1][2:v]overlay=x=220:y=180:shortest=1[vout]
+            " \
+            -map "[vout]" -map 0:a? \
+            -c:v libx264 -preset veryfast -crf 18 -pix_fmt yuv420p \
+            -c:a aac -b:a 160k -movflags +faststart \
+            out/icq-source-redacted.mp4
+
+      - name: Verify output
+        run: |
+          test -s out/icq-source-redacted.mp4
+          ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 out/icq-source-redacted.mp4
+
+      - name: Upload redacted source
+        uses: actions/upload-artifact@v4
+        with:
+          name: icq-source-redacted
+          path: out/icq-source-redacted.mp4
+          if-no-files-found: error
+          retention-days: 7

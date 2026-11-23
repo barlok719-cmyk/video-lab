@@ -47,8 +47,8 @@ export const ICQAd: React.FC = () => {
   const introIn = spring({ frame, fps, config: { damping: 16, stiffness: 110 } });
   const introOut = interpolate(frame, [0, 10, 64, 80], [0, 1, 1, 0], clamp);
   const demoIn = spring({ frame: frame - 72, fps, config: { damping: 18, stiffness: 95 } });
-  const demoOut = interpolate(frame, [72, 86, 292, 310], [0, 1, 1, 0], clamp);
-  const endIn = spring({ frame: frame - 300, fps, config: { damping: 16, stiffness: 100 } });
+  const demoOut = interpolate(frame, [72, 86, 285, 300], [0, 1, 1, 0], clamp);
+  const endIn = spring({ frame: frame - 290, fps, config: { damping: 16, stiffness: 100 } });
   const pulse = 1 + Math.sin(frame / 11) * 0.018;
 
   const logo = staticFile("logo.jpg");
@@ -93,7 +93,7 @@ export const ICQAd: React.FC = () => {
       </AbsoluteFill>
 
       {/* End card */}
-      <AbsoluteFill style={{ opacity: interpolate(frame, [300, 320, 539], [0, 1, 1], clamp), justifyContent: "center", alignItems: "center", transform: `scale(${0.94 + endIn * 0.06})` }}>
+      <AbsoluteFill style={{ opacity: interpolate(frame, [290, 310, 539], [0, 1, 1], clamp), justifyContent: "center", alignItems: "center", transform: `scale(${0.94 + endIn * 0.06})` }}>
         <Img src={logo} style={{ width: 230, height: 230, objectFit: "cover", borderRadius: 38, boxShadow: `0 0 55px rgba(0,230,213,0.22), 0 0 70px rgba(224,0,216,0.18)` }} />
         <div style={{ marginTop: 56, textAlign: "center", fontSize: 54, lineHeight: 1.2, fontWeight: 800 }}>
           ICQ-СМАЙЛЫ

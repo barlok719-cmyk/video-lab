@@ -10,6 +10,8 @@ on:
       - "tsconfig.json"
       - ".github/workflows/render.yml"
       - "*.jpg"
+      - "Smiles for ICQ.zip"
+      - "my-folder/**"
 permissions:
   contents: read
 
@@ -20,14 +22,6 @@ jobs:
     steps:
       - name: Check out video project
         uses: actions/checkout@v4
-
-      - name: Check out private ICQ smile source (read-only)
-        uses: actions/checkout@v4
-        with:
-          repository: barlok719-cmyk/tiktok-rv-private
-          ref: ultramod/next
-          token: ${{ secrets.ICQ_REPO_TOKEN }}
-          path: icq-source
 
       - name: Install media tools
         run: |
@@ -44,7 +38,7 @@ jobs:
           cp "$LOGO_FILE" assets/logo.jpg
           cp assets/logo.jpg public/logo.jpg
           python tools/prepare_source.py
-          python tools/prepare_smiles.py --zip icq-source/my-folder/Animated.zip --ini icq-source/my-folder/_define.ini --out public/smiles
+          python tools/prepare_smiles.py --zip "Smiles for ICQ.zip" --ini my-folder/_define.ini --out public/smiles
           ffmpeg -y -i "21338455214597.mp4" \
             -i assets/avatar-small.png -i assets/avatar-large.png \
             -stream_loop -1 -i public/smiles/01-yahoo.gif \

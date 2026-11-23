@@ -9,7 +9,7 @@ on:
       - "package.json"
       - "tsconfig.json"
       - ".github/workflows/render.yml"
-      - "6EM7UyiHpPx1NEZpz_P0QRSUS-wW6W0f0k3SvBBbHK8lFUy1ZtMeAnMqJRwWZxZsfvejYjLM2jHQXTMrBhHaHZK8JbQVX7RJtvb3tqYQ7QmmLpYi02hA7ShRF5Td1HnWTaJw2VBRfHkGN7UkFP7tEbENot3TtqTmyzqiB0Krq5magVvO6E16i5Dhq5HQqGmU.jpg"
+      - "*.jpg"
 permissions:
   contents: read
 
@@ -27,21 +27,19 @@ jobs:
           sudo apt-get install -y ffmpeg fonts-dejavu-core python3-pil
 
       - name: Prepare anonymized phone recording
+        shell: bash
         run: |
+          set -euo pipefail
           mkdir -p assets public out
-          cp "6EM7UyiHpPx1NEZpz_P0QRSUS-wW6W0f0k3SvBBbHK8lFUy1ZtMeAnMqJRwWZxZsfvejYjLM2jHQXTMrBhHaHZK8JbQVX7RJtvb3tqYQ7QmmLpYi02hA7ShRF5Td1HnWTaJw2VBRfHkGN7UkFP7tEbENot3TtqTmyzqiB0Krq5magVvO6E16i5Dhq5HQqGmU.jpg assets/logo.jpg
+          LOGO_FILE="$(find . -maxdepth 1 -type f -iname '*.jpg' -print -quit)"
+          test -n "$LOGO_FILE"
+          cp "$LOGO_FILE" assets/logo.jpg
           cp assets/logo.jpg public/logo.jpg
           python tools/prepare_source.py
           ffmpeg -y -i "21338455214597.mp4" \
             -i assets/avatar-small.png -i assets/avatar-large.png \
-            -filter_complex "
-              [0:v]drawbox=x=116:y=84:w=130:h=31:color=black:t=fill,
-                   drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='ICQ User':fontcolor=white:fontsize=18:x=120:y=90,
-                   drawbox=x=220:y=344:w=136:h=31:color=black:t=fill,
-                   drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='ICQ User':fontcolor=white:fontsize=19:x=228:y=350[v0];
-              [v0][1:v]overlay=x=62:y=74[v1];
-              [v1][2:v]overlay=x=220:y=180[vout]
-            " -map "[vout]" -map 0:a? -c:v libx264 -preset veryfast -crf 18 \
+            -filter_complex "[0:v]drawbox=x=116:y=84:w=130:h=31:color=black:t=fill,drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='ICQ User':fontcolor=white:fontsize=18:x=120:y=90,drawbox=x=220:y=344:w=136:h=31:color=black:t=fill,drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='ICQ User':fontcolor=white:fontsize=19:x=228:y=350[v0];[v0][1:v]overlay=x=62:y=74[v1];[v1][2:v]overlay=x=220:y=180[vout]" \
+            -map "[vout]" -map 0:a? -c:v libx264 -preset veryfast -crf 18 \
             -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart \
             out/icq-source-redacted.mp4
           cp out/icq-source-redacted.mp4 public/icq-source-redacted.mp4

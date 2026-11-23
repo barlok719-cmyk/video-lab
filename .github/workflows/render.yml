@@ -1,29 +1,56 @@
-name: Render video
+name: Render ICQ ad
 
 on:
   workflow_dispatch:
   push:
     paths:
       - "src/**"
+      - "tools/prepare_source.py"
       - "package.json"
       - "tsconfig.json"
       - ".github/workflows/render.yml"
-
+      - "6EM7UyiHpPx1NEZpz_P0QRSUS-wW6W0f0k3SvBBbHK8lFUy1ZtMeAnMqJRwWZxZsfvejYjLM2jHQXTMrBhHaHZK8JbQVX7RJtvb3tqYQ7QmmLpYi02hA7ShRF5Td1HnWTaJw2VBRfHkGN7UkFP7tEbENot3TtqTmyzqiB0Krq5magVvO6E16i5Dhq5HQqGmU.jpg"
 permissions:
   contents: read
 
 jobs:
   render:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     steps:
-      - name: Check out repository
+      - name: Check out video project
         uses: actions/checkout@v4
+
+      - name: Install media tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-dejavu-core python3-pil
+
+      - name: Prepare anonymized phone recording
+        run: |
+          mkdir -p assets public out
+          cp "6EM7UyiHpPx1NEZpz_P0QRSUS-wW6W0f0k3SvBBbHK8lFUy1ZtMeAnMqJRwWZxZsfvejYjLM2jHQXTMrBhHaHZK8JbQVX7RJtvb3tqYQ7QmmLpYi02hA7ShRF5Td1HnWTaJw2VBRfHkGN7UkFP7tEbENot3TtqTmyzqiB0Krq5magVvO6E16i5Dhq5HQqGmU.jpg assets/logo.jpg
+          cp assets/logo.jpg public/logo.jpg
+          python tools/prepare_source.py
+          ffmpeg -y -i "21338455214597.mp4" \
+            -i assets/avatar-small.png -i assets/avatar-large.png \
+            -filter_complex "
+              [0:v]drawbox=x=116:y=84:w=130:h=31:color=black:t=fill,
+                   drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='ICQ User':fontcolor=white:fontsize=18:x=120:y=90,
+                   drawbox=x=220:y=344:w=136:h=31:color=black:t=fill,
+                   drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='ICQ User':fontcolor=white:fontsize=19:x=228:y=350[v0];
+              [v0][1:v]overlay=x=62:y=74[v1];
+              [v1][2:v]overlay=x=220:y=180[vout]
+            " -map "[vout]" -map 0:a? -c:v libx264 -preset veryfast -crf 18 \
+            -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart \
+            out/icq-source-redacted.mp4
+          cp out/icq-source-redacted.mp4 public/icq-source-redacted.mp4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
 
       - name: Install dependencies
         run: npm install
@@ -31,13 +58,13 @@ jobs:
       - name: Prepare Remotion browser
         run: npx remotion browser ensure
 
-      - name: Render MP4
-        run: npx remotion render src/index.ts Laboratory42 out/lab-test.mp4 --codec=h264
+      - name: Render vertical MP4
+        run: npx remotion render src/index.ts ICQAd out/ICQ-Ultra-Mod-ad.mp4 --codec=h264
 
       - name: Upload rendered video
         uses: actions/upload-artifact@v4
         with:
-          name: laboratory-42-video
-          path: out/lab-test.mp4
+          name: icq-ultra-mod-ad
+          path: out/ICQ-Ultra-Mod-ad.mp4
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 14

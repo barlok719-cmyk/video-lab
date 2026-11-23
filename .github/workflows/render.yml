@@ -21,6 +21,14 @@ jobs:
       - name: Check out video project
         uses: actions/checkout@v4
 
+      - name: Check out private ICQ smile source (read-only)
+        uses: actions/checkout@v4
+        with:
+          repository: barlok719-cmyk/tiktok-rv-private
+          ref: ultramod/next
+          token: ${{ secrets.ICQ_REPO_TOKEN }}
+          path: icq-source
+
       - name: Install media tools
         run: |
           sudo apt-get update

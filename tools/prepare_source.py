@@ -23,5 +23,5 @@ def make_avatar(size: int, output: str):
     Path(output).parent.mkdir(parents=True, exist_ok=True)
     out.save(output)
 
-make_avatar(56, "assets/avatar-small.png")
-make_avatar(176, "assets/avatar-large.png")
+make_avatar(44, "assets/avatar-small.png")
+make_avatar(136, "assets/avatar-large.png")

@@ -47,8 +47,8 @@ export const ICQAd: React.FC = () => {
   const introIn = spring({ frame, fps, config: { damping: 16, stiffness: 110 } });
   const introOut = interpolate(frame, [0, 10, 64, 80], [0, 1, 1, 0], clamp);
   const demoIn = spring({ frame: frame - 72, fps, config: { damping: 18, stiffness: 95 } });
-  const demoOut = interpolate(frame, [72, 86, 327, 345], [0, 1, 1, 0], clamp);
-  const endIn = spring({ frame: frame - 335, fps, config: { damping: 16, stiffness: 100 } });
+  const demoOut = interpolate(frame, [72, 86, 292, 310], [0, 1, 1, 0], clamp);
+  const endIn = spring({ frame: frame - 300, fps, config: { damping: 16, stiffness: 100 } });
   const pulse = 1 + Math.sin(frame / 11) * 0.018;
 
   const logo = staticFile("logo.jpg");
@@ -84,7 +84,7 @@ export const ICQAd: React.FC = () => {
         </div>
         <div style={{ width: 880, height: 1480, borderRadius: 58, padding: 12, background: `linear-gradient(145deg, ${CYAN}, #20232b 38%, ${PINK})`, boxShadow: `0 0 45px rgba(0,230,213,0.17), 0 0 55px rgba(224,0,216,0.12)` }}>
           <div style={{ width: "100%", height: "100%", borderRadius: 47, overflow: "hidden", background: "#000", border: "3px solid #080a0d" }}>
-            <OffthreadVideo src={source} muted startFrom={0} endAt={330} playbackRate={1} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <OffthreadVideo src={source} muted startFrom={0} endAt={300} playbackRate={1} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
         </div>
         <div style={{ position: "absolute", bottom: 104, padding: "17px 34px", borderRadius: 40, border: `1px solid ${CYAN}`, background: "rgba(5,6,9,0.88)", color: WHITE, fontSize: 27, fontWeight: 700, letterSpacing: 2, boxShadow: `0 0 22px rgba(0,230,213,0.16)` }}>
@@ -93,7 +93,7 @@ export const ICQAd: React.FC = () => {
       </AbsoluteFill>
 
       {/* End card */}
-      <AbsoluteFill style={{ opacity: interpolate(frame, [335, 355, 539], [0, 1, 1], clamp), justifyContent: "center", alignItems: "center", transform: `scale(${0.94 + endIn * 0.06})` }}>
+      <AbsoluteFill style={{ opacity: interpolate(frame, [300, 320, 539], [0, 1, 1], clamp), justifyContent: "center", alignItems: "center", transform: `scale(${0.94 + endIn * 0.06})` }}>
         <Img src={logo} style={{ width: 230, height: 230, objectFit: "cover", borderRadius: 38, boxShadow: `0 0 55px rgba(0,230,213,0.22), 0 0 70px rgba(224,0,216,0.18)` }} />
         <div style={{ marginTop: 56, textAlign: "center", fontSize: 54, lineHeight: 1.2, fontWeight: 800 }}>
           ICQ-СМАЙЛЫ

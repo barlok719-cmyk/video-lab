@@ -84,7 +84,7 @@ export const ICQAd: React.FC = () => {
         </div>
         <div style={{ width: 880, height: 1480, borderRadius: 58, padding: 12, background: `linear-gradient(145deg, ${CYAN}, #20232b 38%, ${PINK})`, boxShadow: `0 0 45px rgba(0,230,213,0.17), 0 0 55px rgba(224,0,216,0.12)` }}>
           <div style={{ width: "100%", height: "100%", borderRadius: 47, overflow: "hidden", background: "#000", border: "3px solid #080a0d" }}>
-            <OffthreadVideo src={source} muted startFrom={0} endAt={255} playbackRate={1} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <OffthreadVideo src={source} muted startFrom={0} endAt={330} playbackRate={1} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
         </div>
         <div style={{ position: "absolute", bottom: 104, padding: "17px 34px", borderRadius: 40, border: `1px solid ${CYAN}`, background: "rgba(5,6,9,0.88)", color: WHITE, fontSize: 27, fontWeight: 700, letterSpacing: 2, boxShadow: `0 0 22px rgba(0,230,213,0.16)` }}>

@@ -1,0 +1,37 @@
+name: Inspect source video
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download source video
+        run: |
+          mkdir -p inspect
+          curl -fL --retry 3 \
+            "https://raw.githubusercontent.com/barlok719-cmyk/video-lab/main/21338455214597.mp4" \
+            -o inspect/source.mp4
+          test -s inspect/source.mp4
+          ls -lh inspect/source.mp4
+
+      - name: Extract preview frames
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 inspect/source.mp4 > inspect/duration.txt
+          ffmpeg -hide_banner -i inspect/source.mp4 -vf "fps=1/2,scale=540:-1,tile=2x4" -frames:v 1 inspect/contact-sheet.jpg
+          ffmpeg -hide_banner -i inspect/source.mp4 -vf "fps=1/2,scale=720:-1" inspect/frame-%03d.jpg
+
+      - name: Upload inspection frames
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-video-inspection
+          path: inspect/
+          if-no-files-found: error
+          retention-days: 7

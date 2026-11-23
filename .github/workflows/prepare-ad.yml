@@ -36,8 +36,8 @@ jobs:
                    drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='ICQ User':fontcolor=white:fontsize=18:x=120:y=90,
                    drawbox=x=220:y=344:w=136:h=31:color=black:t=fill,
                    drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf:text='ICQ User':fontcolor=white:fontsize=19:x=228:y=350[v0];
-              [v0][1:v]overlay=x=62:y=74:shortest=1[v1];
-              [v1][2:v]overlay=x=220:y=180:shortest=1[vout]
+              [v0][1:v]overlay=x=62:y=74[v1];
+              [v1][2:v]overlay=x=220:y=180[vout]
             " \
             -map "[vout]" -map 0:a? \
             -c:v libx264 -preset veryfast -crf 18 -pix_fmt yuv420p \
